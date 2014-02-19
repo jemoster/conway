@@ -43,40 +43,54 @@ func (game *Game) Print() {
 
 func (game *Game) Step() {
 	for row := 0; row < game.Rows; row++ {
-		for col := 0; col < game.Cols; col++ {
-			//Get live neighbors
-			live := 0
-			live += isLive(game.Map[game.index(row-1, col-1)])
-			live += isLive(game.Map[game.index(row-1, col)])
-			live += isLive(game.Map[game.index(row-1, col+1)])
-			live += isLive(game.Map[game.index(row, col-1)])
-			live += isLive(game.Map[game.index(row, col+1)])
-			live += isLive(game.Map[game.index(row+1, col-1)])
-			live += isLive(game.Map[game.index(row+1, col)])
-			live += isLive(game.Map[game.index(row+1, col+1)])
-
-			//Apply rules
-			if isLive(game.Map[game.index(row, col)]) == 1 {
-				if live < 2 || live > 3 {
-					game.Map[game.index(row, col)] = 'd'
-				}
-
-			} else if live == 3 && game.Map[game.index(row, col)] != 'r' {
-				game.Map[game.index(row, col)] = 'n'
-			}
-			//game.Map[game.index(row,col)] = 48+byte(live)
+		go func(){for col := 0; col < game.Cols; col++ {
+			game.StepCell(row,col)
 		}
+		}()
 	}
 	for row := 0; row < game.Rows; row++ {
-		for col := 0; col < game.Cols; col++ {
-			if game.Map[game.index(row, col)] == 'd' {
-				game.Map[game.index(row, col)] = '_'
-			} else if game.Map[game.index(row, col)] == 'n' {
-				game.Map[game.index(row, col)] = 'r'
-			}
+		go func(){for col := 0; col < game.Cols; col++ {
+			game.UpdateCell(row,col)
 		}
+		}()
 	}
 }
+
+
+
+func (game *Game) UpdateCell(row int, col int) {
+	if game.Map[game.index(row, col)] == 'd' {
+		game.Map[game.index(row, col)] = '_'
+	} else if game.Map[game.index(row, col)] == 'n' {
+		game.Map[game.index(row, col)] = 'r'
+	}
+}
+
+func (game *Game) StepCell(row int, col int) {
+
+	//Get live neighbors
+	live := 0
+	live += isLive(game.Map[game.index(row-1, col-1)])
+	live += isLive(game.Map[game.index(row-1, col)])
+	live += isLive(game.Map[game.index(row-1, col+1)])
+	live += isLive(game.Map[game.index(row, col-1)])
+	live += isLive(game.Map[game.index(row, col+1)])
+	live += isLive(game.Map[game.index(row+1, col-1)])
+	live += isLive(game.Map[game.index(row+1, col)])
+	live += isLive(game.Map[game.index(row+1, col+1)])
+
+	//Apply rules
+	if isLive(game.Map[game.index(row, col)]) == 1 {
+		if live < 2 || live > 3 {
+			game.Map[game.index(row, col)] = 'd'
+		}
+
+	} else if live == 3 && game.Map[game.index(row, col)] != 'r' {
+		game.Map[game.index(row, col)] = 'n'
+	}
+	//game.Map[game.index(row,col)] = 48+byte(live)
+}
+
 func isLive(cell byte) (live int) {
 	live = 0
 	if cell == 'r' || cell == 'd' {

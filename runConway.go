@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
-	"time"
+//	"time"
 )
 
 func usage() {
@@ -30,12 +30,15 @@ func main() {
 		fmt.Println("Invalid step limit, Error: %s", err)
 	}
 
-	game.Print()
-	fmt.Println("Rows:%s", game.Rows)
-	fmt.Println("Cols:%s", game.Cols)
+	//game.Print()
+	//fmt.Println("Rows:%s", game.Rows)
+	//fmt.Println("Cols:%s", game.Cols)
 	for i := 0; i < int(stepLimit); i++ {
-		time.Sleep(200 * time.Millisecond)
+		//time.Sleep(50 * time.Millisecond)
 		game.Step()
-		game.Print()
+		//game.Print()
+		//if i%100 == 0 {
+		//	fmt.Println("Step:%d",i)
+		//}
 	}
 }
